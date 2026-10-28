@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1F2A2E;
+  --color-sea: #1796A8;
+  --color-deep: #0C3A45;
+  --color-mist: #F0F8F9;
+  --color-sun: #E9A23B;
+  --color-brand: #A8232F;
+  --color-night: #071E27;
+  --font-display: "Bricolage Grotesque", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+}

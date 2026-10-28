@@ -1,0 +1,29 @@
+BALIFUNFLY v4 - Panel Admin
+
+PASANG (Mac, di Terminal):
+
+  unzip -o ~/Downloads/balifunfly-v4-admin.zip -d /tmp/bf
+  cp -R /tmp/bf/. ~/Herd/balifunfly/
+  cd ~/Herd/balifunfly
+  php artisan migrate
+  php artisan db:seed
+  php artisan admin:create
+  php artisan optimize:clear
+  npm run dev
+
+Perintah `admin:create` menanyakan email, nama, dan password (minimal 8 karakter).
+Login: balifunfly.test/admin/login  (atau klik "Login Admin" di footer website).
+Lupa password: jalankan lagi `php artisan admin:create email@anda.com`.
+
+Yang bisa diubah dari admin:
+  - Produk      : nama & deskripsi (EN/ID), kategori, label, harga, foto, urutan, tampil/sembunyi, unggulan beranda
+  - Artikel     : judul, ringkasan, isi (EN/ID), kategori, tanggal, foto, draf/terbit
+  - Pengaturan  : upload video hero, teks hero, kontak, tagline, jam buka, ganti password
+  - Pesan masuk & pelanggan newsletter dari formulir website
+
+Catatan:
+  - `php artisan db:seed` hanya mengisi produk/artikel awal dan hanya jika tabelnya masih kosong.
+  - File upload disimpan di public/uploads/ (jangan dihapus saat deploy).
+  - Upload video butuh batas upload PHP cukup besar (upload_max_filesize & post_max_size >= 50M).
+    Jika gagal, taruh file manual di public/videos/hero.mp4 (tetap didukung).
+  - Teks bagian Layanan, Pelatihan, dan FAQ masih di lang/en/site.php dan lang/id/site.php.
