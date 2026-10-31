@@ -6,7 +6,7 @@
     $pdata = array_merge($p, ['wa' => $wa, 'bg' => $bg, 'ask' => __('site.ask_whatsapp'), 'price_label' => $p['price'] ?? __('site.price_contact')]);
     $count = count($p['images'] ?? []);
 @endphp
-<article data-product-card class="group relative flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white transition hover:shadow-lg focus-within:shadow-lg">
+<article data-product-card class="group relative flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white transition duration-300 hover:-translate-y-1.5 hover:shadow-xl focus-within:shadow-xl">
     <script type="application/json" class="pdata">{!! json_encode($pdata, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
     <div class="relative aspect-[4/3] overflow-hidden bg-gradient-to-br {{ $bg }}">
         {{-- Gambar contoh. Untuk foto asli: tambahkan 'image' => asset('images/produk/nama.jpg') di data produk. --}}
@@ -28,7 +28,7 @@
             <button type="button" data-product-open class="text-left after:absolute after:inset-0 after:content-[''] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea" aria-haspopup="dialog">{{ $p['name'] }}</button>
         </h3>
         <p class="mt-2 flex-1 text-sm text-ink/70">{{ $p['desc'] }}</p>
-        <p class="mt-3 text-sm font-semibold text-sea group-hover:underline" aria-hidden="true">{{ __('site.details.view') }} &rarr;</p>
+        <p class="mt-3 text-sm font-semibold text-sea" aria-hidden="true">{{ __('site.details.view') }} <span class="inline-block transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span></p>
         <p class="mt-3 font-semibold text-deep">{{ $p['price'] ?? __('site.price_contact') }}</p>
         <a href="{{ $wa }}" target="_blank" rel="noopener" class="relative z-10 mt-3 rounded-full bg-deep px-5 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-sea">{{ __('site.ask_whatsapp') }}</a>
     </div>

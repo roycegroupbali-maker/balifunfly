@@ -13,6 +13,7 @@
     <meta property="og:description" content="@yield('description', $tagline)">
     <meta property="og:locale" content="{{ app()->getLocale() === 'id' ? 'id_ID' : 'en_US' }}">
     <meta name="theme-color" content="#071E27">
+    <script>try{if(!matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('js')}catch(e){}</script>
     {{-- Sinkronkan pilihan bahasa dari localStorage (jika cookie hilang) sebelum halaman tampil. --}}
     <script>
         (function () {
@@ -62,7 +63,9 @@
     };
 @endphp
 
-<header id="site-header" data-scrolled="false" class="sticky top-0 z-40 border-b border-white/10 bg-night/60 text-white backdrop-blur-md transition-[background-color,box-shadow] duration-300 data-[scrolled=true]:bg-night/95 data-[scrolled=true]:shadow-lg data-[scrolled=true]:shadow-black/20">
+<div id="bf-progress" aria-hidden="true" class="pointer-events-none fixed inset-x-0 top-0 z-50 h-0.5 bg-sun"></div>
+
+<header id="site-header" data-scrolled="false" class="bf-down sticky top-0 z-40 border-b border-white/10 bg-night/60 text-white backdrop-blur-md transition-[background-color,box-shadow] duration-300 data-[scrolled=true]:bg-night/95 data-[scrolled=true]:shadow-lg data-[scrolled=true]:shadow-black/20">
     <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
         <a href="{{ route('home') }}" aria-label="{{ config('site.name') }}" class="flex items-center gap-3">
             <img src="{{ asset('images/logo-mark.png') }}" alt="{{ config('site.company') }}" class="h-10 w-auto">
@@ -129,14 +132,62 @@
 </footer>
 
 <a href="{{ $wa }}" target="_blank" rel="noopener" aria-label="{{ __('site.wa_float') }}"
-   class="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-105">
+   class="bf-wa fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:scale-105">
     <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5Z"/></svg>
 </a>
 <script>
     (function () {
         var h = document.getElementById('site-header');
-        var onScroll = function () { h.dataset.scrolled = window.scrollY > 24 ? 'true' : 'false'; };
+        var bar = document.getElementById('bf-progress'), ticking = false;
+        var onScroll = function () {
+            h.dataset.scrolled = window.scrollY > 24 ? 'true' : 'false';
+            if (ticking) return; ticking = true;
+            requestAnimationFrame(function () {
+                var max = document.documentElement.scrollHeight - window.innerHeight;
+                bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
+                ticking = false;
+            });
+        };
         onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+        // Animasi masuk: elemen yang sudah terlihat langsung bergerak masuk, sisanya muncul saat di-scroll.
+        if (document.documentElement.classList.contains('js') && 'IntersectionObserver' in window) {
+            var SKIP = /^(SCRIPT|STYLE|TEMPLATE|DIALOG|VIDEO)$/;
+            var targets = [];
+            var collect = function (root) {
+                Array.prototype.forEach.call(root.children, function (el, i) {
+                    if (SKIP.test(el.tagName) || el.getAttribute('aria-hidden') === 'true') return;
+                    if (el.matches('div.grid, ol, div.divide-y')) { collect(el); return; }
+                    targets.push([el, Math.min(i, 6) * 90]);
+                });
+            };
+            document.querySelectorAll('#konten > section, #konten > article').forEach(function (sec) {
+                collect(sec.querySelector(':scope > .mx-auto') || sec);
+            });
+            document.querySelectorAll('footer .grid').forEach(collect);
+
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (!en.isIntersecting) return;
+                    var el = en.target; io.unobserve(el);
+                    el.classList.add('is-in');
+                    // Lepas atribut setelah selesai supaya efek hover elemen (mis. kartu) tidak ikut lambat.
+                    setTimeout(function () { el.removeAttribute('data-reveal'); el.classList.remove('is-in'); el.style.removeProperty('--d'); }, 1100 + (parseInt(el.style.getPropertyValue('--d')) || 0));
+                });
+            }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+
+            targets.forEach(function (t) {
+                var el = t[0], d = t[1];
+                el.style.setProperty('--d', d + 'ms');
+                if (el.getBoundingClientRect().top < window.innerHeight * 0.92) {
+                    el.classList.add('bf-in');
+                    el.addEventListener('animationend', function () { el.classList.remove('bf-in'); el.style.removeProperty('--d'); }, { once: true });
+                } else {
+                    el.setAttribute('data-reveal', '');
+                    io.observe(el);
+                }
+            });
+        }
 
         // Switch bahasa: simpan ke localStorage + cookie (dibaca server), lalu muat ulang halaman ini.
         document.querySelectorAll('[data-lang]').forEach(function (a) {

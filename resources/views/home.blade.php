@@ -22,7 +22,7 @@
 @endphp
 <section class="relative isolate -mt-16 overflow-hidden bg-gradient-to-br from-night via-deep to-sea/70 text-white">
     @if ($heroPoster)
-        <img src="{{ $heroPoster }}" alt="" class="absolute inset-0 -z-30 h-full w-full object-cover">
+        <img src="{{ $heroPoster }}" alt="" class="bf-kenburns absolute inset-0 -z-30 h-full w-full object-cover">
     @endif
     @if ($heroVideo)
         {{-- Sumber video dipasang oleh JS (hemat data & performa di seluler); kalau gagal, foto/gradien tetap tampil. --}}
@@ -42,6 +42,7 @@
             <a href="#kontak" class="rounded-full border border-white/40 px-7 py-3.5 font-semibold transition hover:bg-white/10">{{ __('site.hero.cta_class') }}</a>
         </div>
     </div>
+    <span class="bf-cue bf-fade hidden md:block" style="--d:1400ms" aria-hidden="true"></span>
 </section>
 @if ($heroVideo)
 <script>

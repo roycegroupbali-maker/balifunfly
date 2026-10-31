@@ -11,3 +11,82 @@
   --font-display: "Bricolage Grotesque", sans-serif;
   --font-sans: "Plus Jakarta Sans", sans-serif;
 }
+
+/* ==========================================================
+   Animasi & transisi (profesional, halus, menghormati
+   pengaturan "reduce motion" pengunjung)
+   ========================================================== */
+@keyframes bf-fade-up   { from { opacity: 0; transform: translate3d(0, 26px, 0); } to { opacity: 1; transform: none; } }
+@keyframes bf-fade-down { from { opacity: 0; transform: translate3d(0, -14px, 0); } to { opacity: 1; transform: none; } }
+@keyframes bf-fade-in   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bf-kenburns  { from { transform: scale(1); } to { transform: scale(1.08); } }
+@keyframes bf-cue       { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(100%); } }
+@keyframes bf-wa-pulse  {
+  0%   { box-shadow: 0 10px 25px -8px rgba(0,0,0,.35), 0 0 0 0 rgba(37,211,102,.5); }
+  70%  { box-shadow: 0 10px 25px -8px rgba(0,0,0,.35), 0 0 0 18px rgba(37,211,102,0); }
+  100% { box-shadow: 0 10px 25px -8px rgba(0,0,0,.35), 0 0 0 0 rgba(37,211,102,0); }
+}
+
+/* Masuk saat halaman dibuka / elemen sudah terlihat */
+.bf-in   { animation: bf-fade-up .9s cubic-bezier(.22,1,.36,1) both; animation-delay: var(--d, 0ms); }
+.bf-down { animation: bf-fade-down .7s cubic-bezier(.22,1,.36,1) both; }
+.bf-fade { animation: bf-fade-in 1s ease both; animation-delay: var(--d, 0ms); }
+
+/* Muncul saat di-scroll (diatur oleh JS di layout; hanya aktif jika html.js) */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity .8s cubic-bezier(.22,1,.36,1) var(--d, 0ms), transform .8s cubic-bezier(.22,1,.36,1) var(--d, 0ms);
+  will-change: opacity, transform;
+}
+html.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Hero */
+.bf-kenburns { animation: bf-kenburns 26s ease-in-out infinite alternate; transform-origin: 60% 40%; }
+.bf-cue { position: absolute; bottom: 1.75rem; left: 50%; height: 2.75rem; width: 1px; overflow: hidden; background: rgba(255,255,255,.25); }
+.bf-cue::after { content: ""; position: absolute; inset: 0; background: #E9A23B; animation: bf-cue 2s cubic-bezier(.65,0,.35,1) infinite; }
+
+/* Tombol WhatsApp melayang */
+.bf-wa { animation: bf-fade-in .8s ease 1.2s both, bf-wa-pulse 2.8s ease-out 2s infinite; }
+
+/* Tombol utama (halaman publik): terangkat halus saat hover, menekan saat diklik */
+#konten a[class*="rounded-full"][class*="font-semibold"] {
+  transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, background-color .2s ease, filter .2s ease;
+}
+#konten a[class*="rounded-full"][class*="font-semibold"]:hover { transform: translateY(-2px); box-shadow: 0 12px 24px -12px rgba(7,30,39,.5); }
+#konten a[class*="rounded-full"][class*="font-semibold"]:active { transform: translateY(0) scale(.97); box-shadow: none; }
+
+/* FAQ: jawaban turun halus saat dibuka */
+#konten details[open] > p { animation: bf-fade-up .45s cubic-bezier(.22,1,.36,1) both; }
+
+/* Garis progres scroll */
+#bf-progress { transform-origin: left; transform: scaleX(0); }
+
+/* ---------- Popup detail produk ---------- */
+#product-modal {
+  opacity: 0; transform: translateY(20px) scale(.97);
+  transition: opacity .35s ease, transform .4s cubic-bezier(.22,1,.36,1), overlay .35s allow-discrete, display .35s allow-discrete;
+}
+#product-modal[open] { opacity: 1; transform: none; }
+#product-modal::backdrop {
+  opacity: 0; transition: opacity .35s ease, overlay .35s allow-discrete, display .35s allow-discrete;
+}
+#product-modal[open]::backdrop { opacity: 1; }
+@starting-style {
+  #product-modal[open] { opacity: 0; transform: translateY(20px) scale(.97); }
+  #product-modal[open]::backdrop { opacity: 0; }
+}
+#product-modal[open] #pm-gallery { animation: bf-fade-in .7s ease both; }
+#product-modal[open] #pm-info > * { animation: bf-fade-up .6s cubic-bezier(.22,1,.36,1) both; }
+#product-modal[open] #pm-info > :nth-child(1) { animation-delay: 120ms; }
+#product-modal[open] #pm-info > :nth-child(2) { animation-delay: 180ms; }
+#product-modal[open] #pm-info > :nth-child(3) { animation-delay: 240ms; }
+#product-modal[open] #pm-info > :nth-child(4) { animation-delay: 300ms; }
+#product-modal[open] #pm-info > :nth-child(5) { animation-delay: 360ms; }
+#product-modal[open] #pm-info > :nth-child(6) { animation-delay: 420ms; }
+#product-modal[open] #pm-info > :nth-child(7) { animation-delay: 480ms; }
+#pm-main { transition: opacity .22s ease, transform .22s cubic-bezier(.22,1,.36,1); }
+
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] { opacity: 1 !important; transform: none !important; }
+}

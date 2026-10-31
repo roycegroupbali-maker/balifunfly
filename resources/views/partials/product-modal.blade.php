@@ -8,7 +8,7 @@
         </button>
 
         {{-- Galeri --}}
-        <div class="bg-night">
+        <div id="pm-gallery" class="bg-night">
             <div id="pm-stage" class="relative aspect-[4/3] w-full select-none overflow-hidden md:aspect-auto md:h-[min(560px,60vh)]">
                 <img id="pm-main" alt="" class="absolute inset-0 hidden h-full w-full object-contain">
                 <div id="pm-fallback" class="absolute inset-0 hidden bg-gradient-to-br">
@@ -27,7 +27,7 @@
         </div>
 
         {{-- Info --}}
-        <div class="flex flex-col p-6 md:overflow-y-auto md:p-8">
+        <div id="pm-info" class="flex flex-col p-6 md:overflow-y-auto md:p-8">
             <p id="pm-cat" class="text-sm font-semibold text-sea"></p>
             <h2 id="pm-name" class="mt-1 pr-10 font-display text-2xl font-extrabold leading-tight md:text-3xl"></h2>
             <p id="pm-price" class="mt-3 text-xl font-bold text-deep"></p>
@@ -52,18 +52,37 @@
 
     function fill(tpl, o) { return tpl.replace(/:(\w+)/g, function (m, k) { return k in o ? o[k] : m; }); }
 
-    function show(i) {
+    var swapId = 0;
+    function show(i, instant, dir) {
         if (!imgs.length) return;
+        dir = dir || 1;
         cur = (i + imgs.length) % imgs.length;
-        main.src = imgs[cur];
+        var src = imgs[cur], id = ++swapId;
         main.alt = name + ' - ' + fill(T.photo, { n: cur + 1, total: imgs.length });
         count.textContent = (cur + 1) + ' / ' + imgs.length;
         Array.prototype.forEach.call(thumbs.children, function (b, k) {
             var on = k === cur;
             b.setAttribute('aria-selected', on);
-            b.className = 'h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition ' + (on ? 'border-sun opacity-100' : 'border-transparent opacity-60 hover:opacity-100');
+            b.className = 'h-16 w-20 shrink-0 overflow-hidden rounded-lg border-2 transition duration-300 ' + (on ? 'border-sun opacity-100 -translate-y-0.5' : 'border-transparent opacity-60 hover:opacity-100');
             if (on) b.scrollIntoView({ block: 'nearest', inline: 'center' });
         });
+        if (instant || !main.getAttribute('src')) {
+            main.style.transition = 'none'; main.style.opacity = 1; main.style.transform = 'none'; main.src = src;
+        } else {
+            // Foto lama memudar & bergeser, foto baru masuk dari arah sebaliknya.
+            main.style.transition = ''; main.style.opacity = 0; main.style.transform = 'translateX(' + (-dir * 28) + 'px) scale(.98)';
+            setTimeout(function () {
+                if (id !== swapId) return;
+                var go = function () {
+                    if (id !== swapId) return;
+                    main.style.transition = 'none'; main.style.transform = 'translateX(' + (dir * 28) + 'px) scale(.98)';
+                    void main.offsetWidth;
+                    main.style.transition = ''; main.style.opacity = 1; main.style.transform = 'none';
+                };
+                main.onload = go; main.onerror = go; main.src = src;
+                if (main.complete) go();
+            }, 200);
+        }
         [1, -1].forEach(function (d) { var n = new Image(); n.src = imgs[(cur + d + imgs.length) % imgs.length]; });
     }
 
@@ -96,11 +115,12 @@
             b.type = 'button'; b.setAttribute('role', 'tab');
             b.setAttribute('aria-label', fill(T.photo, { n: k + 1, total: imgs.length }));
             im.src = src; im.alt = ''; im.loading = 'lazy'; im.className = 'h-full w-full object-cover';
-            b.appendChild(im); b.addEventListener('click', function () { show(k); });
+            b.appendChild(im); b.addEventListener('click', function () { if (k !== cur) show(k, false, k > cur ? 1 : -1); });
             thumbs.appendChild(b);
         });
         dlg.scrollTop = 0; $('pm-detail-wrap').parentElement.scrollTop = 0;
-        show(0);
+        main.removeAttribute('src');
+        show(0, true);
         dlg.showModal();
         document.documentElement.classList.add('overflow-hidden');
     }
@@ -109,8 +129,8 @@
         var b = e.target.closest('[data-product-open]');
         if (b) open(b.closest('[data-product-card]'));
     });
-    prev.addEventListener('click', function () { show(cur - 1); });
-    next.addEventListener('click', function () { show(cur + 1); });
+    prev.addEventListener('click', function () { show(cur - 1, false, -1); });
+    next.addEventListener('click', function () { show(cur + 1, false, 1); });
     $('pm-close').addEventListener('click', function () { dlg.close(); });
     dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });  // klik di luar popup
     dlg.addEventListener('close', function () {
@@ -118,7 +138,7 @@
         if (opener) opener.focus();
     });
     dlg.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowLeft') { show(cur - 1); } else if (e.key === 'ArrowRight') { show(cur + 1); }
+        if (e.key === 'ArrowLeft') { show(cur - 1, false, -1); } else if (e.key === 'ArrowRight') { show(cur + 1, false, 1); }
     });
 
     // Geser (swipe) di layar sentuh
@@ -127,7 +147,7 @@
     stage.addEventListener('touchend', function (e) {
         if (x0 === null) return;
         var dx = e.changedTouches[0].clientX - x0; x0 = null;
-        if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1));
+        if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1), false, dx < 0 ? 1 : -1);
     }, { passive: true });
 })();
 </script>

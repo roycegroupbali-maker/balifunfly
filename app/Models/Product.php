@@ -20,7 +20,8 @@ class Product extends Model
         return ['is_active' => 'boolean', 'is_featured' => 'boolean'];
     }
 
-    public const MAX_GALLERY = 10;
+    /** Foto tambahan per produk. Bersama foto utama = maks. 5 foto. */
+    public const MAX_GALLERY = 4;
 
     public function images(): HasMany
     {

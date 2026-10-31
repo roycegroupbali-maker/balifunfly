@@ -48,7 +48,7 @@
 
     <div class="rounded-2xl border border-ink/10 bg-white p-5">
         <label for="gallery" class="block text-sm font-semibold">Foto tambahan (galeri)</label>
-        <p class="mt-1 text-xs text-ink/50">Tampil di popup saat produk diklik, setelah foto utama. Maksimal {{ \App\Models\Product::MAX_GALLERY }} foto, masing-masing 4 MB.</p>
+        <p class="mt-1 text-xs text-ink/50">Tampil di popup saat produk diklik, setelah foto utama. Maksimal {{ \App\Models\Product::MAX_GALLERY }} foto tambahan + 1 foto utama = 5 foto per produk, masing-masing 4 MB. Foto bisa dipilih sekaligus (tahan Cmd/Ctrl).</p>
         @if ($product->exists && $product->images->isNotEmpty())
             <div class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-5">
                 @foreach ($product->images as $img)

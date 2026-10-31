@@ -8,6 +8,7 @@ use App\Models\ProductImage;
 use App\Support\Upload;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
@@ -49,7 +50,7 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $data = $this->payload($request);
+        $data = $this->payload($request, $product);
         if ($request->hasFile('image')) {
             Upload::delete($product->image);
             $data['image'] = Upload::store($request->file('image'), 'products');
@@ -74,7 +75,7 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('ok', 'Produk dihapus.');
     }
 
-    private function payload(Request $request): array
+    private function payload(Request $request, ?Product $product = null): array
     {
         $data = $request->validate([
             'name_en' => 'required|string|max:150',
@@ -91,6 +92,13 @@ class ProductController extends Controller
             'gallery.*' => 'image|mimes:jpg,jpeg,png,webp|max:4096',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
         ], [], self::ATTR);
+
+        // Total foto tambahan (yang sudah ada - yang dihapus + yang baru) tidak boleh melebihi batas.
+        $keep = $product ? $product->images()->whereNotIn('id', array_filter((array) $request->input('remove_gallery', []), 'is_numeric'))->count() : 0;
+        $room = max(0, Product::MAX_GALLERY - $keep);
+        if (count((array) $request->file('gallery', [])) > $room) {
+            throw ValidationException::withMessages(['gallery' => 'Maksimal '.Product::MAX_GALLERY.' foto tambahan + 1 foto utama = 5 foto per produk. Sisa slot foto tambahan: '.$room.'.']);
+        }
 
         unset($data['image'], $data['gallery']);
         $data['sort_order'] = $data['sort_order'] ?? 0;
