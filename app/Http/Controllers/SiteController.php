@@ -16,16 +16,16 @@ class SiteController extends Controller
 {
     public function products()
     {
-        $groups = Product::visible()->get()->map->toCard()->groupBy('cat');
+        $groups = Product::visible()->with('images')->get()->map->toCard()->groupBy('cat');
 
         return view('products.index', ['groups' => $groups]);
     }
 
     public function home()
     {
-        $featured = Product::visible()->where('is_featured', true)->limit(4)->get();
+        $featured = Product::visible()->with('images')->where('is_featured', true)->limit(4)->get();
         if ($featured->isEmpty()) {
-            $featured = Product::visible()->limit(4)->get();
+            $featured = Product::visible()->with('images')->limit(4)->get();
         }
 
         return view('home', [

@@ -30,6 +30,16 @@ return [
     'price_contact' => 'Contact us',
     'ask_whatsapp' => 'Ask via WhatsApp',
 
+    'details' => [
+        'view' => 'View details',
+        'close' => 'Close',
+        'prev' => 'Previous photo',
+        'next' => 'Next photo',
+        'photo' => 'Photo :n of :total',
+        'photos' => ':n photos',
+        'about' => 'About this product',
+    ],
+
     'meta' => [
         'home_title' => 'Paramotor Sales, Rental, and Training in Bali',
         'products_title' => 'Products',

@@ -28,5 +28,6 @@
     </section>
 @endforeach
 
+@include('partials.product-modal')
 @include('partials.inquiry')
 @endsection

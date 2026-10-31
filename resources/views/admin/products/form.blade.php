@@ -13,12 +13,14 @@
         <fieldset class="space-y-4 rounded-2xl border border-ink/10 bg-white p-5">
             <legend class="px-2 text-sm font-bold text-sea">Bahasa Inggris (EN)</legend>
             <x-admin.input label="Nama produk" name="name_en" :value="$product->name_en" required />
-            <x-admin.input label="Deskripsi" name="desc_en" :value="$product->desc_en" rows="4" />
+            <x-admin.input label="Deskripsi singkat (di kartu produk)" name="desc_en" :value="$product->desc_en" rows="3" />
+            <x-admin.input label="Deskripsi lengkap (di popup detail)" name="detail_en" :value="$product->detail_en" rows="8" hint="Pisahkan paragraf dengan satu baris kosong." />
         </fieldset>
         <fieldset class="space-y-4 rounded-2xl border border-ink/10 bg-white p-5">
             <legend class="px-2 text-sm font-bold text-sea">Bahasa Indonesia (ID)</legend>
             <x-admin.input label="Nama produk" name="name_id" :value="$product->name_id" required />
-            <x-admin.input label="Deskripsi" name="desc_id" :value="$product->desc_id" rows="4" />
+            <x-admin.input label="Deskripsi singkat (di kartu produk)" name="desc_id" :value="$product->desc_id" rows="3" />
+            <x-admin.input label="Deskripsi lengkap (di popup detail)" name="detail_id" :value="$product->detail_id" rows="8" hint="Pisahkan paragraf dengan satu baris kosong." />
         </fieldset>
     </div>
 
@@ -32,7 +34,7 @@
     </div>
 
     <div class="rounded-2xl border border-ink/10 bg-white p-5">
-        <label for="image" class="block text-sm font-semibold">Foto produk</label>
+        <label for="image" class="block text-sm font-semibold">Foto utama</label>
         @if ($product->image)
             <div class="mt-3 flex items-center gap-4">
                 <img src="{{ asset($product->image) }}" alt="" class="h-24 rounded-lg object-cover">
@@ -40,8 +42,26 @@
             </div>
         @endif
         <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" class="mt-3 block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-deep file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white">
-        <p class="mt-1 text-xs text-ink/50">JPG, PNG, atau WebP, maksimal 4 MB. Rasio 4:3 paling pas. Tanpa foto, tampil gambar bawaan.</p>
+        <p class="mt-1 text-xs text-ink/50">JPG, PNG, atau WebP, maksimal 4 MB. Rasio 4:3 paling pas. Foto ini yang tampil di kartu produk. Tanpa foto, tampil gambar bawaan.</p>
         @error('image')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+    </div>
+
+    <div class="rounded-2xl border border-ink/10 bg-white p-5">
+        <label for="gallery" class="block text-sm font-semibold">Foto tambahan (galeri)</label>
+        <p class="mt-1 text-xs text-ink/50">Tampil di popup saat produk diklik, setelah foto utama. Maksimal {{ \App\Models\Product::MAX_GALLERY }} foto, masing-masing 4 MB.</p>
+        @if ($product->exists && $product->images->isNotEmpty())
+            <div class="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-5">
+                @foreach ($product->images as $img)
+                    <label class="block text-xs text-ink/70">
+                        <img src="{{ $img->url() }}" alt="" class="aspect-[4/3] w-full rounded-lg object-cover">
+                        <span class="mt-1 flex items-center gap-1"><input type="checkbox" name="remove_gallery[]" value="{{ $img->id }}"> Hapus</span>
+                    </label>
+                @endforeach
+            </div>
+        @endif
+        <input id="gallery" name="gallery[]" type="file" multiple accept="image/jpeg,image/png,image/webp" class="mt-3 block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-deep file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white">
+        @error('gallery')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+        @error('gallery.*')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
 
     <div class="flex flex-wrap gap-6 rounded-2xl border border-ink/10 bg-white p-5 text-sm">

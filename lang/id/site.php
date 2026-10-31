@@ -30,6 +30,16 @@ return [
     'price_contact' => 'Hubungi kami',
     'ask_whatsapp' => 'Tanya via WhatsApp',
 
+    'details' => [
+        'view' => 'Lihat detail',
+        'close' => 'Tutup',
+        'prev' => 'Foto sebelumnya',
+        'next' => 'Foto berikutnya',
+        'photo' => 'Foto :n dari :total',
+        'photos' => ':n foto',
+        'about' => 'Tentang produk ini',
+    ],
+
     'meta' => [
         'home_title' => 'Jual, Sewa, dan Pelatihan Paramotor di Bali',
         'products_title' => 'Produk',

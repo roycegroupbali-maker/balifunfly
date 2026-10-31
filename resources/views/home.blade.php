@@ -149,4 +149,7 @@
 </section>
 
 @include('partials.inquiry')
+@if (count($products))
+@include('partials.product-modal')
+@endif
 @endsection
