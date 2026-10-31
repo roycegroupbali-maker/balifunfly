@@ -7,6 +7,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{{ asset('favicon.ico') }}?v=2" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32.png') }}?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ asset('icon-192.png') }}?v=2">
+<link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}?v=2">
     <title>@yield('title', config('site.name').' - Paramotor Bali')</title>
     <meta name="description" content="@yield('description', $tagline)">
     <meta property="og:title" content="@yield('title', config('site.name'))">
