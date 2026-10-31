@@ -130,6 +130,7 @@
     <div class="border-t border-white/10 py-5 text-sm text-white/50">
         <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 sm:flex-row">
             <span>&copy; {{ date('Y') }} {{ config('site.company') }}. {{ __('site.footer.rights') }}</span>
+            <a href="https://skynusa-tech.com" target="_blank" rel="noopener" class="transition-colors hover:text-white">Powered by <span class="font-semibold text-white/80">Skynusa Tech</span></a>
             <a href="{{ route('admin.login') }}" rel="nofollow" class="text-white/40 transition-colors hover:text-white">{{ __('site.footer.admin') }}</a>
         </div>
     </div>
