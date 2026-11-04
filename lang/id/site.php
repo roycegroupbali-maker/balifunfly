@@ -186,6 +186,8 @@ return [
             'service' => 'Servis dan perawatan',
             'other' => 'Lainnya',
         ],
+        'recaptcha_required' => 'Silakan centang reCAPTCHA terlebih dahulu.',
+        'recaptcha_failed'   => 'Verifikasi reCAPTCHA gagal, silakan coba lagi.',
     ],
 
     'footer' => [

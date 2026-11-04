@@ -11,6 +11,7 @@ use App\Models\Article;
 use App\Models\Inquiry;
 use App\Models\Product;
 use App\Models\Subscriber;
+use App\Rules\Recaptcha;
 
 class SiteController extends Controller
 {
@@ -43,7 +44,7 @@ class SiteController extends Controller
 
     public function article(Article $article)
     {
-        abort_unless($article->is_active && $article->published_at->lte(now()), 404);
+        abort_unless($article->is_active && \Illuminate\Support\Carbon::parse($article->published_at)->lte(now()), 404);
 
         $others = Article::visible()->where('id', '!=', $article->id)->limit(3)->get()->map->toCard()->all();
         $paragraphs = preg_split('/\R{2,}/', trim((string) $article->loc('body'))) ?: [];
@@ -61,9 +62,15 @@ class SiteController extends Controller
             'topic'      => 'required|in:'.implode(',', array_keys(__('site.inquiry.topics'))),
             'message'    => 'nullable|string|max:1000',
             'consent'    => 'accepted',
+            'g-recaptcha-response' => ['required', new Recaptcha],
+        ], [
+            'g-recaptcha-response.required' => __('site.inquiry.recaptcha_required'),
         ]);
 
-        $inquiry = Inquiry::create(collect($data)->except('consent')->all() + ['locale' => app()->getLocale()]);
+        $inquiry = Inquiry::create(
+            collect($data)->except(['consent', 'g-recaptcha-response'])->all()
+            + ['locale' => app()->getLocale()]
+        );
 
         // Kirim email setelah halaman tampil ke pengunjung; kegagalan email tidak mengganggu pengunjung (pesan tetap tersimpan di admin).
         defer(function () use ($inquiry) {

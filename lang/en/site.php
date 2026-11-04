@@ -186,6 +186,8 @@ return [
             'service' => 'Service and maintenance',
             'other' => 'Other',
         ],
+        'recaptcha_required' => 'Please tick the reCAPTCHA box first.',
+        'recaptcha_failed' => 'reCAPTCHA verification failed, please try again.',
     ],
 
     'footer' => [
