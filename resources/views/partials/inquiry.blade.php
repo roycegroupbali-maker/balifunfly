@@ -61,8 +61,6 @@
                 <button class="rounded-full bg-deep px-8 py-3.5 font-semibold text-white transition hover:bg-sea focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea">{{ __('site.inquiry.submit') }}</button>
             </div>
         </form>
-        @push('scripts')
             <script src="https://www.google.com/recaptcha/api.js?hl={{ app()->getLocale() }}" async defer></script>
-        @endpush
     </div>
 </section>
